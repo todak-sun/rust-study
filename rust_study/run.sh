@@ -1,0 +1,7 @@
+TARGET_FILE=$1
+BASENAME=$(basename $TARGET_FILE)
+FILENAME="${BASENAME%.*}"
+
+rustc $TARGET_FILE
+./$FILENAME.exe
+rm -rf ./$FILENAME.exe ./$FILENAME.pdb
