@@ -6,8 +6,17 @@
 //   respectively
 //
 // Notes:
-// * Use a variable set to any integer
-// * Use a match expression to determine which message to display
-// * Use an underscore (_) to match on any value
 
-fn main() {}
+fn main() {
+    // * Use a variable set to any integer
+    let any_int = 3;
+
+    match any_int {
+        // * Use a match expression to determine which message to display
+        1 => println!("one"),
+        2 => println!("two"),
+        3 => println!("three"),
+        // * Use an underscore (_) to match on any value
+        _ => println!("other"),
+    }
+}
