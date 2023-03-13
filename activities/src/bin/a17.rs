@@ -13,6 +13,7 @@
 //   * Try searching for: to_uppercase, to_lowercase
 
 fn main() {
-  let name = "todak";
-  println!("uppercase : {:?}", name.to_uppercase()) ;
+    let name = "my Name is ToDak";
+    println!("uppercase : {:?}", name.to_uppercase());
+    println!("lowercae  : {:?}", name.to_lowercase());
 }
