@@ -128,14 +128,16 @@ fn update_bill_menu(bills: &mut Bills) {
         Some(name) => name,
         None => return,
     };
+    if !bills.inner.contains_key(&name) {
+        println!("bill not found");
+        return;
+    }
     let amount = match get_bill_amount() {
         Some(amount) => amount,
         None => return,
     };
     if bills.update(&name, amount) {
         println!("updated")
-    } else {
-        println!("bill not found")
     }
 }
 
@@ -161,7 +163,10 @@ fn main_menu() {
 
     loop {
         show();
-        let input = get_input();
+        let input = match get_input() {
+            Some(input) => input,
+            None => continue,
+        };
         match input.as_str() {
             "1" => add_bill_menu(&mut bills),
             "2" => view_bills_menu(&bills),
