@@ -22,6 +22,7 @@ fn print_color_name(color: Colors) {
         Colors::GREEN => "green",
         Colors::BLUE => "blue",
     };
+
     println!("{:?}", color_name);
 }
 

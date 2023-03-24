@@ -1,6 +1,10 @@
-fn maybe_num() -> Option<i32> {}
+fn maybe_num() -> Option<i32> {
+    None
+}
 
-fn maybe_word() -> Option<String> {}
+fn maybe_word() -> Option<String> {
+    None
+}
 
 fn main() {
     let plus_one = match maybe_num() {
