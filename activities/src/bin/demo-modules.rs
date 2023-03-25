@@ -1,5 +1,5 @@
 mod greet {
-    fn hello() {
+    pub fn hello() {
         println!("hello");
     }
 
