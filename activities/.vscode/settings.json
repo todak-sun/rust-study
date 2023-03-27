@@ -1,3 +1,9 @@
 {
-  "cSpell.words": ["chrono", "combinators", "humantime", "thiserror"]
+  "cSpell.words": [
+    "chrono",
+    "combinators",
+    "humantime",
+    "structopt",
+    "thiserror"
+  ]
 }
