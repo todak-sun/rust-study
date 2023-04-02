@@ -1,20 +1,50 @@
 use super::method::Method;
-use std::convert::TryFrom;
+use std::{convert::TryFrom, error::Error, fmt::Debug, fmt::Display};
+
 pub struct Request {
     path: String,
     query_string: Option<String>,
     method: Method,
 }
-impl Request {
-    pub fn from_byte_array(buf: &[u8]) -> Result<Self, String> {
-        Ok()
-    }
-}
+
+impl Request {}
 
 impl TryFrom<&[u8]> for Request {
-    type Error = String;
+    type Error = ParseError;
 
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
-        String::from_utf16_lossy(value);
+        unimplemented!()
     }
 }
+
+pub enum ParseError {
+    InvalidRequest,
+    InvalidEncoding,
+    InvalidProtocol,
+    InvalidMethod,
+}
+
+impl ParseError {
+    fn message(&self) -> &str {
+        match self {
+            Self::InvalidRequest => " Invalid Request",
+            Self::InvalidEncoding => "Invalid Encoding",
+            Self::InvalidProtocol => "Invalid Protocol",
+            Self::InvalidMethod => "Invalid Method",
+        }
+    }
+}
+
+impl Display for ParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.message())
+    }
+}
+
+impl Debug for ParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.message())
+    }
+}
+
+impl Error for ParseError {}
