@@ -31,4 +31,4 @@ impl FromStr for Method {
     }
 }
 
-struct MethodError {}
+pub struct MethodError;
