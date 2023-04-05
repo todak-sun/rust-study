@@ -2,22 +2,21 @@ use super::method::{Method, MethodError};
 use std::str::{self, Utf8Error};
 use std::{convert::TryFrom, error::Error, fmt::Debug, fmt::Display};
 
-pub struct Request {
-    path: String,
-    query_string: Option<String>,
+#[derive(Debug)]
+pub struct Request<'buf> {
+    path: &'buf str,
+    query_string: Option<&'buf str>,
     method: Method,
 }
 
-impl Request {}
-
-impl TryFrom<&[u8]> for Request {
+impl<'buf> TryFrom<&'buf [u8]> for Request<'buf> {
     type Error = ParseError;
 
-    fn try_from(buffer: &[u8]) -> Result<Self, Self::Error> {
+    fn try_from<'a>(buffer: &'buf [u8]) -> Result<Request<'buf>, Self::Error> {
         let request = str::from_utf8(buffer)?;
 
         let (method, request) = get_next_word(request).ok_or(ParseError::InvalidRequest)?;
-        let (path, request) = get_next_word(request).ok_or(ParseError::InvalidRequest)?;
+        let (mut path, request) = get_next_word(request).ok_or(ParseError::InvalidRequest)?;
         let (protocol, _) = get_next_word(request).ok_or(ParseError::InvalidRequest)?;
 
         if protocol != "HTTP/1.1" {
@@ -26,11 +25,18 @@ impl TryFrom<&[u8]> for Request {
 
         let method = method.parse()?;
 
-        Self {
+        let mut query_string = None;
+
+        if let Some(index) = path.find('?') {
+            query_string = Some(&path[index + 1..]);
+            path = &path[..index];
+        }
+
+        Ok(Self {
             method,
             path,
-            query_string: Option::None,
-        }
+            query_string: query_string,
+        })
     }
 }
 
