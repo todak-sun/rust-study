@@ -1,8 +1,17 @@
-use crate::http::{HttpStatusCode, Request, Response};
+use crate::http::{HttpStatusCode, ParseError, Request, Response};
 use std::convert::TryFrom;
 
-use std::io::{Read, Write};
+use std::io::Read;
 use std::net::TcpListener;
+
+pub trait Handler {
+    fn handle_request(&mut self, request: &Request) -> Response;
+    fn handle_bad_request(&mut self, e: &ParseError) -> Response {
+        println!("Failed to parse request: {}", e);
+        Response::new(HttpStatusCode::BadRequest, None)
+    }
+}
+
 pub struct Server {
     addr: String,
 }
@@ -12,7 +21,7 @@ impl Server {
         Self { addr }
     }
 
-    pub fn run(self) {
+    pub fn run(self, mut handler: impl Handler) {
         println!("server running on {}", self.addr);
         let listener = TcpListener::bind(&self.addr).unwrap();
 
@@ -25,15 +34,10 @@ impl Server {
                         Ok(_) => {
                             println!("Received a request: {}", String::from_utf8_lossy(&buffer));
                             let response = match Request::try_from(&buffer[..]) {
-                                Ok(req) => {
-                                    dbg!(req);
-                                    Response::new(
-                                        HttpStatusCode::Ok,
-                                        Some("<h1>Hello World</h1>".to_owned()),
-                                    )
-                                }
-                                Err(e) => Response::new(HttpStatusCode::BadRequest, None),
+                                Ok(request) => handler.handle_request(&request),
+                                Err(e) => handler.handle_bad_request(&e),
                             };
+
                             if let Err(e) = response.send(&mut stream) {
                                 println!("Failed to send response: {}", e);
                             }
