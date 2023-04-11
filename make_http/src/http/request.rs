@@ -1,11 +1,12 @@
 use super::method::{Method, MethodError};
+use super::{QueryString, QueryStringValue};
 use std::str::{self, Utf8Error};
 use std::{convert::TryFrom, error::Error, fmt::Debug, fmt::Display};
 
 #[derive(Debug)]
 pub struct Request<'buf> {
     path: &'buf str,
-    query_string: Option<&'buf str>,
+    query_string: Option<QueryString<'buf>>,
     method: Method,
 }
 
@@ -28,14 +29,14 @@ impl<'buf> TryFrom<&'buf [u8]> for Request<'buf> {
         let mut query_string = None;
 
         if let Some(index) = path.find('?') {
-            query_string = Some(&path[index + 1..]);
+            query_string = Some(QueryString::from(&path[index + 1..]));
             path = &path[..index];
         }
 
         Ok(Self {
             method,
             path,
-            query_string: query_string,
+            query_string,
         })
     }
 }

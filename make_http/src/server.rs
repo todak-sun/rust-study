@@ -31,7 +31,9 @@ impl Server {
                                 Err(e) => println!("Failed to parse a request: {}", e),
                             }
                         }
-                        Err(e) => {}
+                        Err(e) => {
+                            println!("{:?}", e)
+                        }
                     }
                 }
                 Err(e) => {
